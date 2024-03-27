@@ -32,25 +32,20 @@ ros2 launch awsim_yolo awsim_yolo.launch.py
 
 | Name         | Type                  | Description  |
 | ------------ | --------------------- | ------------ |
-| `topic_name` | std_msgs::msg::String | Sample desc. |
+| `in/image` | sensor_msgs/Image | Input Image |
 
 ### Output
 
 | Name         | Type                  | Description  |
 | ------------ | --------------------- | ------------ |
-| `topic_name` | std_msgs::msg::String | Sample desc. |
+| `out/objects` | tier4_perception_msgs/DetectedObjectsWithFeature | 2D bounding boxes info |
 
 ### Services and Actions
 
-| Name           | Type                   | Description  |
-| -------------- | ---------------------- | ------------ |
-| `service_name` | std_srvs::srv::Trigger | Sample desc. |
 
 ### Parameters
 
-| Name         | Type | Description  |
-| ------------ | ---- | ------------ |
-| `param_name` | int  | Sample desc. |
+TODO
 
 
 ## References / External links
