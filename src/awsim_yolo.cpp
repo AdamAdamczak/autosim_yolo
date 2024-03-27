@@ -23,10 +23,19 @@ AwsimYolo::AwsimYolo()
 {
 }
 
-int64_t AwsimYolo::foo(int64_t bar) const
+bool AwsimYolo::load_model(const std::string &model_path)
 {
-  std::cout << "Hello World, " << bar << std::endl;
-  return bar;
+    Ort::SessionOptions session_options;
+    session_options.SetIntraOpNumThreads(1);
+    session_options.SetGraphOptimizationLevel(ORT_ENABLE_ALL);
+
+    try {
+        session_ = std::make_unique<Ort::Session>(env_, model_path.c_str(), session_options);
+        return true;
+    } catch (const Ort::Exception &exception) {
+        std::cerr << "Error loading ONNX model: " << exception.what() << std::endl;
+        return false;
+    }
 }
 
 }  // namespace awsim_yolo

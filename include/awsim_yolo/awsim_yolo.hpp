@@ -16,10 +16,11 @@
 #define AWSIM_YOLO__AWSIM_YOLO_HPP_
 
 #include <cstdint>
-
+#include <string>
 #include "awsim_yolo/visibility_control.hpp"
-
-
+#include <opencv2/opencv.hpp>
+#include <sensor_msgs/msg/image.hpp>
+#include <onnxruntime_cxx_api.h>
 namespace awsim_yolo
 {
 
@@ -27,7 +28,12 @@ class AWSIM_YOLO_PUBLIC AwsimYolo
 {
 public:
   AwsimYolo();
-  int64_t foo(int64_t bar) const;
+  bool load_model(const std::string & model_path);
+
+private:
+  Ort::Env env_{ORT_LOGGING_LEVEL_WARNING, "AwsimYolo"};
+  std::unique_ptr<Ort::Session> session_;
+  
 };
 
 }  // namespace awsim_yolo
