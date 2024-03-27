@@ -21,6 +21,7 @@
 #include <opencv2/opencv.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <onnxruntime_cxx_api.h>
+#include <cv_bridge/cv_bridge.h>
 namespace awsim_yolo
 {
 
@@ -28,11 +29,18 @@ class AWSIM_YOLO_PUBLIC AwsimYolo
 {
 public:
   AwsimYolo();
-  bool load_model(const std::string & model_path);
+
+  void infer(const sensor_msgs::msg::Image::SharedPtr & image_msg);
 
 private:
+  bool load_model(const std::string & model_path);
+  void preprocessing(cv::Mat &image);
+
+  Ort::TypeInfo inputTypeInfo_;
+  std::vector<int64_t> inputTensorShape_;
   Ort::Env env_{ORT_LOGGING_LEVEL_WARNING, "AwsimYolo"};
   std::unique_ptr<Ort::Session> session_;
+  
   
 };
 
