@@ -17,6 +17,7 @@
 
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
+#include <image_transport/image_transport.hpp>
 
 #include "awsim_yolo/awsim_yolo.hpp"
 
@@ -28,10 +29,17 @@ class AWSIM_YOLO_PUBLIC AwsimYoloNode : public rclcpp::Node
 {
 public:
   explicit AwsimYoloNode(const rclcpp::NodeOptions & options);
+  void callback(const sensor_msgs::msg::Image::ConstSharedPtr image_msg);
+  void connectCb();
 
 private:
+  std::mutex connect_mutex_;
   AwsimYoloPtr awsim_yolo_{nullptr};
   std::string model_path_{};
+  image_transport::Publisher image_pub_;
+  image_transport::Subscriber image_sub_;
+  rclcpp::Publisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>::SharedPtr objects_pub_;
+  rclcpp::TimerBase::SharedPtr timer_;
 };
 }  // namespace awsim_yolo
 
