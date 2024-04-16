@@ -31,7 +31,7 @@ public:
 
 private:
   AwsimYoloPtr awsim_yolo_{nullptr};
-  int64_t param_name_{123};
+  std::string model_path_{};
 };
 }  // namespace awsim_yolo
 

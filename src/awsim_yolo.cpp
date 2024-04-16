@@ -19,49 +19,22 @@
 namespace awsim_yolo
 {
 
-AwsimYolo::AwsimYolo();
+AwsimYolo::AwsimYolo(std::string model_path)
 {
+  this->_yolo = std::make_shared<Yolov9>(model_path);
 }
 
 
-bool AwsimYolo::load_model(const std::string &model_path)
+void AwsimYolo::infer(const sensor_msgs::msg::Image::ConstSharedPtr&image_msg,vector<Detection> & output)
+  {
+    cv_bridge::CvImagePtr in_image_ptr;
+    in_image_ptr = cv_bridge::toCvCopy(image_msg, sensor_msgs::image_encodings::BGR8);
+    this->_yolo->predict(in_image_ptr->image,output);
+    
+  }
+void AwsimYolo::draw_bbox(cv::Mat& image,const vector<Detection> & output)
 {
-    Ort::SessionOptions session_options;
-    session_options.SetIntraOpNumThreads(1);
-    session_options.SetGraphOptimizationLevel(ORT_ENABLE_ALL);
-
-    try {
-        session_ = std::make_unique<Ort::Session>(env_, model_path.c_str(), session_options);
-        this->inputTypeInfo_  = session_->GetInputTypeInfo(0);
-        this->inputTensorShape_ = inputTypeInfo_.GetTensorTypeAndShapeInfo().GetShape();
-        return true;
-    } catch (const Ort::Exception &exception) {
-        std::cerr << "Error loading ONNX model: " << exception.what() << std::endl;
-        return false;
-    }
+    this->_yolo->draw(image,output);
 }
-
-  void AwsimYolo::infer(const sensor_msgs::msg::Image::SharedPtr &image_msg)
-  {
-    cv_bridge::CvImagePtr cv_ptr;
-
-    try
-    {
-      cv_ptr = cv_bridge::toCvCopy(image_msg, sensor_msgs::image_encodings::BGR8);
-    }
-    catch (cv_bridge::Exception &e)
-    {
-      std::cerr << "cv_bridge exception: " << e.what() << std::endl;
-      return;
-    }
-    // TODO: Implement inference
-
-
-  }
-  void AwsimYolo::preprocessing(cv::Mat &image)
-  {
-    // TODO: Implement preprocessing
-  }
-
 
 }  // namespace awsim_yolo

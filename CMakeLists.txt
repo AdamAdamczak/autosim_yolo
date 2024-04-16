@@ -4,20 +4,34 @@ project(awsim_yolo)
 find_package(autoware_cmake REQUIRED)
 autoware_package()
 find_package(OpenCV REQUIRED)
-set(ONNX_RUNTIME_PATH "/opt/onnxruntime/onnxruntime-linux-x64-cuda-1.17.1")
+find_package(CUDA REQUIRED)
+include_directories(
+  include
+  ${CUDA_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
+)
 
 ament_auto_add_library(${PROJECT_NAME} SHARED
   include/awsim_yolo/awsim_yolo.hpp
   include/awsim_yolo/visibility_control.hpp
   src/awsim_yolo.cpp
-  ${OpenCV_INCLUDE_DIRS}
-  ${ONNX_RUNTIME_PATH}/include
-
 )
+# set(HEADERS
+#     src/yolov9.h
+#     src/macros.h
+#     src/logging.h
+#     src/cuda_utils.h
+#     src/preprocess.h
+# )
 
 ament_auto_add_library(${PROJECT_NAME}_node SHARED
   include/awsim_yolo/awsim_yolo_node.hpp
   src/awsim_yolo_node.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}
+  ${CUDA_LIBRARIES}
+  ${OpenCV_LIBRARIES}
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}_node

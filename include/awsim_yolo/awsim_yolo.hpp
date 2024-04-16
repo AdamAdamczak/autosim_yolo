@@ -18,28 +18,22 @@
 #include <cstdint>
 #include <string>
 #include "awsim_yolo/visibility_control.hpp"
-#include <opencv2/opencv.hpp>
 #include <sensor_msgs/msg/image.hpp>
-#include <onnxruntime_cxx_api.h>
 #include <cv_bridge/cv_bridge.h>
+#include "yolov9.h"
+#include <tier4_perception_msgs/msg/detected_objects_with_feature.hpp>
 namespace awsim_yolo
 {
 
 class AWSIM_YOLO_PUBLIC AwsimYolo
 {
 public:
-  AwsimYolo();
+  AwsimYolo(std::string model_path);
 
-  void infer(const sensor_msgs::msg::Image::SharedPtr & image_msg);
-
+  void infer(const sensor_msgs::msg::Image::ConstSharedPtr & image_msg, vector<Detection> & output);
+  void draw_bbox(cv::Mat& image,const vector<Detection> & output);
 private:
-  bool load_model(const std::string & model_path);
-  void preprocessing(cv::Mat &image);
-
-  Ort::TypeInfo inputTypeInfo_;
-  std::vector<int64_t> inputTensorShape_;
-  Ort::Env env_{ORT_LOGGING_LEVEL_WARNING, "AwsimYolo"};
-  std::unique_ptr<Ort::Session> session_;
+  std::shared_ptr<Yolov9> _yolo;
   
   
 };

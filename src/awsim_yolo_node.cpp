@@ -20,9 +20,24 @@ namespace awsim_yolo
 AwsimYoloNode::AwsimYoloNode(const rclcpp::NodeOptions & options)
 :  Node("awsim_yolo", options)
 {
-  awsim_yolo_ = std::make_unique<awsim_yolo::AwsimYolo>();
-  param_name_ = this->declare_parameter("param_name", 456);
-  awsim_yolo_->foo(param_name_);
+  using std::placeholders::_1;
+  std::string engine_path = declare_parameter("engine_path", std::string());
+  awsim_yolo_ = std::make_unique<awsim_yolo::AwsimYolo>(engine_path);
+  timer_ = rclcpp::create_timer(this, get_clock(), 1000ms, std::bind(&AwsimYoloNode::callback, this));
+  image_pub_ = image_transport::create_publisher(this, "out/image");
+  image_sub_  = image_transport::create_subscription(this, "in/image", std::bind(&AwsimYoloNode::callback, this, _1), "raw",rmw_qos_profile_sensor_data);
+}
+
+
+void AwsimYoloNode::callback(const sensor_msgs::msg::Image::ConstSharedPtr image_msg)
+{
+  
+  std::vector<Detection> output;
+  awsim_yolo_->infer(image_msg, output);
+  cv::Mat cv_image = cv_bridge::toCvCopy(image_msg, sensor_msgs::image_encodings::BGR8)->image;
+  awsim_yolo_->draw_bbox(cv_image, output);
+  this->image_pub_.publish(cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", cv_image).toImageMsg());
+
 }
 
 }  // namespace awsim_yolo

@@ -15,9 +15,9 @@
 #include "gtest/gtest.h"
 #include "awsim_yolo/awsim_yolo.hpp"
 
-TEST(TestAwsimYolo, TestHello) {
-  std::unique_ptr<awsim_yolo::AwsimYolo> awsim_yolo_ =
-    std::make_unique<awsim_yolo::AwsimYolo>();
-  auto result = awsim_yolo_->foo(999);
-  EXPECT_EQ(result, 999);
-}
+// TEST(TestAwsimYolo, TestHello) {
+//   std::unique_ptr<awsim_yolo::AwsimYolo> awsim_yolo_ =
+//     std::make_unique<awsim_yolo::AwsimYolo>();
+//   auto result = awsim_yolo_->foo(999);
+//   EXPECT_EQ(result, 999);
+// }
